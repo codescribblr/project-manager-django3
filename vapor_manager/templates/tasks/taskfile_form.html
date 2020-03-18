@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}
+{% if not file %}Add New{% else %}Update{% endif %} Task File
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{% if not file %}Add New{% else %}Update{% endif %} Task File</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{% if not file %}{% url "tasks:file.create" task.pk %}{% else %}{% url "tasks:update_file" task.pk file.pk %}{% endif %}">
+        {% csrf_token %}
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                {% with form as form %}
+                    {% include "tasks/partials/taskfile_fields.html" %}
+                {% endwith %}
+
+                <a href="{% url "tasks:detail" task.pk %}" class="btn btn-lg btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-lg btn-info">{% if not file %}Create{% else %}Update{% endif %} Task File</button>
+
+            </div>
+        </div>
+    </form>
+{% endblock %}

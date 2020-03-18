@@ -1,0 +1,36 @@
+<div class="form-group">
+    {{ form.name.label_tag }}
+    <input type="text" name="{{ form.name.name }}" class="form-control" required id="{{ form.name.id_for_label }}" placeholder="Enter client name" value="{{ form.name.value|default_if_none:'' }}">
+    <small class="form-text text-danger">{{ form.name.errors }}</small>
+</div>
+{% if not client %}
+<div class="form-group">
+    {{ form.contact_name.label_tag }}
+    <input type="text" name="{{ form.contact_name.name }}" class="form-control" id="{{ form.contact_name.id_for_label }}" placeholder="Enter contact name" value="{{ form.contact_name.value|default_if_none:'' }}">
+    <small class="form-text text-danger">{{ form.contact_name.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.contact_email.label_tag }}
+    <input type="email" name="{{ form.contact_email.name }}" class="form-control" id="{{ form.contact_email.id_for_label }}"  placeholder="Enter contact email" value="{{ form.contact_email.value|default_if_none:'' }}">
+    <small class="form-text text-danger">{{ form.contact_email.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.contact_phone.label_tag }}
+    <input type="tel" name="{{ form.contact_phone.name }}" class="form-control" id="{{ form.contact_phone.id_for_label }}" placeholder="Enter contact phone" value="{{ form.contact_phone.value|default_if_none:'' }}">
+    <small class="form-text text-danger">{{ form.contact_phone.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.contact_position.label_tag }}
+    <input type="tel" name="{{ form.contact_position.name }}" class="form-control" id="{{ form.contact_position.id_for_label }}" placeholder="Enter contact position" value="{{ form.contact_position.value|default_if_none:'' }}">
+    <small class="form-text text-danger">{{ form.contact_position.errors }}</small>
+</div>
+{% else %}
+<div class="form-group">
+    {{ form.status.label_tag }}
+    <select name="{{ form.status.name }}" id="{{ form.status.id_for_label }}" class="custom-select">
+        <option value="active" {% if form.status.value == 'active' %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if form.status.value == 'inactive' %}selected{% endif %}>Inactive</option>
+    </select>
+    <small class="form-text text-danger">{{ form.status.errors }}</small>
+</div>
+{% endif %}

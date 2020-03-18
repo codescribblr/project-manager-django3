@@ -1,0 +1,48 @@
+<div class="form-group">
+    {{ form.hostname.label_tag }}
+    <input type="text" name="{{ form.hostname.name }}" class="form-control" required id="{{ form.hostname.id_for_label }}" placeholder="Enter server hostname" value="{{ form.hostname.value|default_if_none:'' }}">
+    <small class="form-text text-danger">{{ form.hostname.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.public_ip.label_tag }}
+    <input type="text" name="{{ form.public_ip.name }}" class="form-control" id="{{ form.public_ip.id_for_label }}" placeholder="Enter public IP address" value="{{ form.public_ip.value|default_if_none:'' }}">
+    <small class="form-text text-danger">{{ form.public_ip.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.platform.label_tag }}
+    <input type="text" name="{{ form.platform.name }}" class="form-control" id="{{ form.platform.id_for_label }}" placeholder="Enter platform" value="{{ form.platform.value|default_if_none:'' }}">
+    <small class="form-text text-danger">{{ form.platform.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.cost.label_tag }}
+    <input type="number" name="{{ form.cost.name }}" class="form-control" id="{{ form.cost.id_for_label }}" placeholder="Enter monthly cost in whole cents" value="{{ form.cost.value|default_if_none:'' }}">
+    <small id="costHelp" class="form-text text-muted">e.g. $10 enter as 1000</small>
+    <small class="form-text text-danger">{{ form.cost.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.slots.label_tag }}
+    <input type="number" name="{{ form.slots.name }}" class="form-control" id="{{ form.slots.id_for_label }}" placeholder="Enter total available slots" value="{{ form.slots.value|default_if_none:'' }}">
+    <small class="form-text text-danger">{{ form.slots.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.capacity.label_tag }}
+    <textarea name="{{ form.private_info.name }}" class="form-control" id="{{ form.private_info.id_for_label }}" placeholder="Enter server capacity">{{ form.private_info.value|default_if_none:'' }}</textarea>
+    <small id="capacityHelp" class="form-text text-muted">Info like CPU, RAM, Disk Size, Bandwidth, etc.</small>
+    <small class="form-text text-danger">{{ form.private_info.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.private_info.label_tag }}
+    <textarea name="{{ form.private_info.name }}" class="form-control" id="{{ form.private_info.id_for_label }}" placeholder="Enter private info">{{ form.private_info.value|default_if_none:'' }}</textarea>
+    <small id="privateInfoHelp" class="form-text text-muted">This information is encrypted on our servers.</small>
+    <small class="form-text text-danger">{{ form.private_info.errors }}</small>
+</div>
+{% if server %}
+<div class="form-group">
+    {{ form.status.label_tag }}
+    <select name="{{ form.status.name }}" id="{{ form.status.id_for_label }}" class="custom-select">
+        <option value="active" {% if form.status.value == 'active' %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if form.status.value == 'inactive' %}selected{% endif %}>Inactive</option>
+    </select>
+    <small class="form-text text-danger">{{ form.status.errors }}</small>
+</div>
+{% endif %}

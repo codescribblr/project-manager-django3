@@ -1,0 +1,35 @@
+{% load static i18n compress %}
+<div class="topbar-divider d-none d-sm-block"></div>
+
+{% if request.user.is_authenticated %}
+    <li class="nav-item dropdown no-arrow">
+        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ request.user.name }}</span>
+            <img class="img-profile rounded-circle" src="{{ request.user.profile_image_url }}">
+        </a>
+        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+            <a class="dropdown-item" href="{% url 'accounts:detail' account.pk %}">
+                <i class="fas fa-users fa-sm fa-fw mr-2 text-gray-400"></i>
+                Account Profile
+            </a>
+            <a class="dropdown-item" href="{% url 'users:detail' request.user.email %}">
+                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                Profile
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'account_logout' %}" data-toggle="modal" data-target="#logoutModal">
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                Logout
+            </a>
+        </div>
+    </li>
+
+{% else %}
+    <li class="nav-item">
+        <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+    </li>
+    <li class="nav-item">
+        <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+    </li>
+{% endif %}

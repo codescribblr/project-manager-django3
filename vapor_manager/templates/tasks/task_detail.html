@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load tz %}
+{% block title %}
+Task Details
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Task Detail - {{ task.name }}</h1>
+        <a href="{% url "tasks:update" task.pk %}" class="d-sm-inline-block btn btn-info btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-pencil-alt"></i>
+                </span>
+            <span class="text">Edit</span>
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <!-- Content Row -->
+    <div class="row mb-4">
+        <div class="col-lg-12 mb-4">
+
+            <!-- Task Details -->
+            <div class="card mb-2">
+                <!-- Card Header -->
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">Task Details</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Client:</strong> <a href="{% url "clients:detail" task.project.client.pk %}" class="text-success">{{ task.project.client.name }}</a></p>
+                    <p><strong>Project:</strong> <a href="{% url "projects:detail" task.project.pk %}" class="text-primary">{{ task.project.name }}</a></p>
+                    <p><strong>Task:</strong> {{ task.name }}</p>
+                    <p><strong>Start Date:</strong> {{ task.start_date|date:"F j, Y" }}</p>
+                    <p><strong>Due Date:</strong> {{ task.due_date|date:"F j, Y"|default:"None" }}</p>
+                    <p><strong>Description:</strong> <br>
+                        {{ task.description|linebreaksbr }}</p>
+                    <p><strong>Status:</strong> {{ task.status }}</p>
+                    {% if task.status == 'completed' %}
+                        <p><strong>Completed At:</strong> {{ task.completed_at|date:"F j, Y h:i A" }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <h2 class="h4 mb-0 text-gray-800">Files</h2>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+
+            <div class="card mb-2">
+                <!-- Card Header -->
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">Files</h6>
+                </div>
+                <div class="card-body">
+                    {% if files %}
+                        <ul>
+                            {% for file in files %}
+                                <li><a href="{% url "tasks:file.download" task.pk file.pk %}" class="text-info">{{ file.filename }}</a> <a href="{% url "tasks:file.delete" task.pk file.pk %}" class="text-danger">(remove)</a>
+                                <br>uploaded by: {{ file.user.email }} on {{ file.created|date:"F j, Y h:i A" }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No Attached Files</p>
+                    {% endif %}
+                    <button type="button" data-toggle="modal" data-target="#taskFilesModal" class="btn btn-sm btn-info">Attach File</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <h2 class="h4 mb-0 text-gray-800">Task Notes</h2>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12 mb-4">
+            {% for note in task.notes.all %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <p>
+                            <a href="{% url "tasks:note.delete" task.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger float-sm-right ml-1">
+                                <span class="icon text-white">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                            </a>
+                            <a href="{% url "tasks:note.update" task.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-info btn-icon-split float-sm-right">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </span>
+                                <span class="text">Edit Note</span>
+                            </a>
+                            Posted: {{ note.created|date:"F j, Y h:i A" }}<br>
+                            Modified: {{ note.modified|date:"F j, Y h:i A" }}
+                        </p>
+                        <p>{{ note.details|linebreaksbr }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No task notes yet.</p>
+            {% endfor %}
+        </div>
+        <div class="col-lg-12 mb">
+            <a href="{% url "tasks:note.create" task.pk %}" class="d-xs-block d-sm-inline-block btn btn-info btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span class="text">Add Note</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <a href="{% url "tasks:delete" task.pk %}" class="btn btn-danger float-right">Delete Task</a>
+            <form method="POST" action="{% url "tasks:archive" task.pk %}" class="float-right mr-2">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="completed" />
+                <button class="d-sm-inline-block btn btn-info btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">Mark Complete</span>
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="taskFilesModal" tabindex="-1" role="dialog" aria-labelledby="taskFilesModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url "tasks:file.create" task.pk %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="taskFilesModalLabel">Upload a Task File</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="taskFile" name="file">
+                            <label class="custom-file-label" for="taskFile">Choose file</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-info">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

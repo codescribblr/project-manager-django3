@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}
+{% if not server %}Add New{% else %}Update{% endif %} Server
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Attach Server</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{% if not server %}{% url "servers:create" %}{% else %}{% url "servers:update" server.pk %}{% endif %}">
+        {% csrf_token %}
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                {% with form as form %}
+                    {% include "servers/partials/server_fields.html" %}
+                {% endwith %}
+
+                <a href="{% if not server %}{% url "servers:list" %}{% else %}{% url "servers:detail" server.pk %}{% endif %}" class="btn btn-lg btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-lg btn-warning">{% if not server %}Create{% else %}Update{% endif %} Server</button>
+
+            </div>
+        </div>
+    </form>
+{% endblock %}

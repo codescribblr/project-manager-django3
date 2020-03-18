@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+Client List
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Clients</h1>
+        <a href="{% url "clients:create" %}" class="d-sm-inline-block btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+            <span class="text">Add New</span>
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <h2 class="h5 mb-3 text-gray-800">{{ status|title }} Clients</h2>
+            {% if clients %}
+                <div class="list-group">
+                    {% for client in clients %}
+                        <a href="{% url "clients:detail" client.pk %}" class="h6 mb-1 list-group-item list-group-item-action text-success">{{ client.name }}</a>
+                    {% endfor %}
+                </div>
+                <br />
+            {% else %}
+                <p>No {{ status }} clients yet.</p>
+                {% if status == 'active' %}
+                <p><a href="{% url "clients:create" %}" class="btn btn-success btn-lg">Create One Now</a></p>
+                {% endif %}
+            {% endif %}
+            <p><a href="{% url "clients:list.by_status" status=alt_status %}">View {{ alt_status }} clients</a></p>
+        </div>
+    </div>
+{% endblock %}

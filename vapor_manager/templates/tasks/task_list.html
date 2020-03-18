@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+Task List
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Tasks</h1>
+        <a href="{% url "tasks:create" %}" class="d-sm-inline-block btn btn-info btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+            <span class="text">Add New</span>
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <h2 class="h5 mb-3 text-gray-800">{{ status|title }} Tasks</h2>
+            {% if tasks %}
+                <div class="list-group">
+                    {% for task in tasks %}
+                        <a href="{% url "tasks:detail" task.pk %}" class="h6 mb-1 list-group-item list-group-item-action text-info">{{ task.name }} {% if status == 'open' %}<span class="text-default">(Due: {{ task.due_date|date:"F j, Y"|default:"N/A" }})</span>{% else %}<span class="text-default">(Completed On: {{ task.completed_at|date:"F j, Y h:i A"|default:"N/A" }})</span>{% endif %}</a>
+                    {% endfor %}
+                </div>
+                <br />
+            {% else %}
+                <p>No {{ status }} tasks yet.</p>
+                {% if status == 'open' %}
+                <p><a href="{% url "tasks:create" %}" class="btn btn-info btn-lg">Create One Now</a></p>
+                {% endif %}
+            {% endif %}
+            <p><a href="{% url "tasks:list.by_status" status=alt_status %}">View {{ alt_status }} tasks</a></p>
+        </div>
+    </div>
+{% endblock %}

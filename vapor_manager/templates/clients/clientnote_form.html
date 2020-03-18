@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}
+{% if not note %}Add New{% else %}Update{% endif %} Client Note
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{% if not note %}Add New{% else %}Update{% endif %} Client Note</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{% if not note %}{% url "clients:note.create" client.pk %}{% else %}{% url "clients:note.update" client.pk note.pk %}{% endif %}">
+        {% csrf_token %}
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                {% with form as form %}
+                    {% include "clients/partials/clientnote_fields.html" %}
+                {% endwith %}
+
+                <a href="{% url "clients:detail" client.pk %}" class="btn btn-lg btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-lg btn-success">{% if not note %}Create{% else %}Update{% endif %} Client Note</button>
+
+            </div>
+        </div>
+    </form>
+{% endblock %}

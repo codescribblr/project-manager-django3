@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% load tz %}
+{% block title %}
+Server Details
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Server Detail - {{ server.hostname }}</h1>
+        <a href="{% url "servers:update" server.pk %}" class="d-sm-inline-block btn btn-warning btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-pencil-alt"></i>
+                </span>
+            <span class="text">Edit</span>
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <!-- Content Row -->
+    <div class="row mb-4">
+        <div class="col-lg-12 mb-4">
+
+            <!-- Server Details -->
+            <div class="card mb-2">
+                <!-- Card Header -->
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">Server Details</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Server Hostname:</strong> {{ server.hostname }}</p>
+                    <p><strong>Server Public IP:</strong> {{ server.public_ip }}</p>
+                    <p><strong>Server Cost:</strong> {{ server.cost }}</p>
+                    <p><strong>Server Total Slots:</strong> {{ server.slots }}</p>
+                    <p><strong>Server Available Slots:</strong> {{ server.available_slots }}</p>
+                    <p><strong>Server Capacity:</strong> {{ server.linebreaksbr }}</p>
+                    <p><strong>Private Info:</strong> <br>
+                        <code>{{ server.private_info|linebreaksbr }}</code></p>
+                    <p><strong>Status:</strong> {{ server.status }}</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <h2 class="h4 mb-0 text-gray-800">Projects & Clients</h2>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <!-- Active Servers -->
+            <div class="card mb-2">
+                <!-- Card Header -->
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
+                </div>
+                <div class="card-body">
+                    {% if projects %}
+                        <ul>
+                            {% for project in projects %}
+                                <li><a href="{% url "projects:detail" project.pk %}" class="text-primary">{{ project.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No Associated Projects</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card mb-2">
+                <!-- Inactive Servers -->
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">Clients</h6>
+                </div>
+                <div class="card-body">
+                    {% if clients %}
+                        <ul>
+                            {% for client in clients %}
+                                <li><a href="{% url "clients:detail" client.pk %}" class="text-success">{{ client.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No Associated Clients</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <h2 class="h4 mb-0 text-gray-800">Files</h2>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+
+            <div class="card mb-2">
+                <!-- Inactive Servers -->
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">Files</h6>
+                </div>
+                <div class="card-body">
+                    {% if files %}
+                        <ul>
+                            {% for file in files %}
+                                <li><a href="{% url "servers:file.download" server.pk file.pk %}" class="text-warning">{{ file.filename }}</a> <a href="{% url "servers:file.delete" server.pk file.pk %}" class="text-danger">(remove)</a>
+                                <br>uploaded by: {{ file.user.email }} on {{ file.created|date:"F j, Y h:i A" }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No Attached Files</p>
+                    {% endif %}
+                    <button type="button" data-toggle="modal" data-target="#serverFilesModal" class="btn btn-sm btn-warning">Attach File</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <h2 class="h4 mb-0 text-gray-800">Server Notes</h2>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12 mb-4">
+            {% for note in server.notes.all %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <p>
+                            <a href="{% url "servers:note.delete" server.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger float-sm-right ml-1">
+                                <span class="icon text-white">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                            </a>
+                            <a href="{% url "servers:note.update" server.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-warning btn-icon-split float-sm-right">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </span>
+                                <span class="text">Edit Note</span>
+                            </a>
+                            Posted: {{ note.created|date:"F j, Y h:i A" }}<br>
+                            Modified: {{ note.modified|date:"F j, Y h:i A" }}
+                        </p>
+                        <p>{{ note.details|linebreaksbr }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No server notes yet.</p>
+            {% endfor %}
+        </div>
+        <div class="col-lg-12 mb">
+            <a href="{% url "servers:note.create" server.pk %}" class="d-xs-block d-sm-inline-block btn btn-warning btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span class="text">Add Note</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <a href="{% url "servers:delete" server.pk %}" class="btn btn-danger float-right">Delete Server</a>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="serverFilesModal" tabindex="-1" role="dialog" aria-labelledby="serverFilesModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url "servers:file.create" server.pk %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="serverFilesModalLabel">Upload a Server File</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="serverFile" name="file">
+                            <label class="custom-file-label" for="serverFile">Choose file</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-warning">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

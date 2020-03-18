@@ -1,0 +1,5 @@
+<div class="form-group">
+    {{ form.details.label_tag }}
+    <textarea name="{{ form.details.name }}" class="form-control" required id="{{ form.details.id_for_label }}" placeholder="Enter note details">{{ form.details.value|default_if_none:'' }}</textarea>
+    <small class="form-text text-danger">{{ form.details.errors }}</small>
+</div>

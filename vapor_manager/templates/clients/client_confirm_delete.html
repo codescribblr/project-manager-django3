@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}
+Delete Client
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Delete Client - {{ client.name }}</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{% url "clients:delete" client.pk %}">
+        {% csrf_token %}
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <p class="message warning">Are you sure you want to delete this client?</p>
+                <pre>{{ client.name }}</pre>
+                <a href="{% url "clients:detail" client.pk %}" class="btn btn-lg btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-lg btn-success">Delete Client</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

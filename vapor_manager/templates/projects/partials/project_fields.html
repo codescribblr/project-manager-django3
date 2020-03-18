@@ -1,0 +1,36 @@
+{% if not client %}
+<div class="form-group">
+    <label for="client">Client</label>
+    <select name="client" id="client" class="custom-select">
+        {% for client in account.clients.all %}
+            <option value="{{ client.id }}" {% if form.client.value == client.id %}selected{% endif %}>{{ client.name }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+<div class="form-group">
+    {{ form.name.label_tag }}
+    <input type="text" name="{{ form.name.name }}" class="form-control" required id="{{ form.name.id_for_label }}" placeholder="Enter project name" value="{{ form.name.value|default_if_none:'' }}">
+    <small class="form-text text-danger">{{ form.name.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.description.label_tag }}
+    <textarea name="{{ form.description.name }}" class="form-control" id="{{ form.description.id_for_label }}" placeholder="Enter project description">{{ form.description.value|default_if_none:'' }}</textarea>
+    <small class="form-text text-danger">{{ form.description.errors }}</small>
+</div>
+{% if project %}
+<div class="form-group">
+    {{ form.private_info.label_tag }}
+    <textarea name="{{ form.private_info.name }}" class="form-control" id="{{ form.private_info.id_for_label }}" placeholder="Enter private info">{{ form.private_info.value|default_if_none:'' }}</textarea>
+    <small id="privateInfoHelp" class="form-text text-muted">This information is encrypted on our servers.</small>
+    <small class="form-text text-danger">{{ form.private_info.errors }}</small>
+</div>
+<div class="form-group">
+    {{ form.status.label_tag }}
+    <select name="{{ form.status.name }}" id="{{ form.status.id_for_label }}" class="custom-select">
+        <option value="active" {% if form.status.value == 'active' %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if form.status.value == 'inactive' %}selected{% endif %}>Inactive</option>
+    </select>
+    <small class="form-text text-danger">{{ form.status.errors }}</small>
+</div>
+{% endif %}

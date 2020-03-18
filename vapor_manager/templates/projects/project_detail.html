@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load tz %}
+{% block title %}
+Project Details
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Project Detail - {{ project.name }}</h1>
+        <a href="{% url "projects:update" project.pk %}" class="d-sm-inline-block btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-pencil-alt"></i>
+                </span>
+            <span class="text">Edit</span>
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <!-- Content Row -->
+    <div class="row mb-4">
+        <div class="col-lg-12 mb-4">
+            <div class="card mb-2">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Project Details</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Client:</strong> <a href="{% url "clients:detail" project.client.pk %}" class="text-success">{{ project.client.name }}</a></p>
+                    <p><strong>Project Description:</strong> {{ project.description }}</p>
+                    <p><strong>Private Info:</strong> <br>
+                        <code>{{ project.private_info|linebreaksbr }}</code></p>
+                    <p><strong>Status:</strong> {{ project.status }}</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <h2 class="h4 mb-0 text-gray-800">Tasks</h2>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card mb-2">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">Open Tasks</h6>
+                </div>
+                <div class="card-body">
+                    {% if open_tasks %}
+                        <ul>
+                            {% for task in open_tasks %}
+                                <li><a href="{% url "tasks:detail" task.pk %}" class="text-info">{{ task.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No Open Tasks</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card mb-2">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">Completed Tasks</h6>
+                </div>
+                <div class="card-body">
+                    {% if completed_tasks %}
+                        <ul>
+                            {% for task in completed_tasks %}
+                                <li><a href="{% url "tasks:detail" task.pk %}" class="text-info">{{ task.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No Completed Tasks</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <h2 class="h4 mb-0 text-gray-800">Servers & Files</h2>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+
+            <div class="card mb-2">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">Servers</h6>
+                </div>
+                <div class="card-body">
+                    {% if servers %}
+                        <ul>
+                            {% for server in servers %}
+                                <li><a href="{% url "servers:detail" server.pk %}" class="text-warning">{{ server.hostname }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No Attached Servers</p>
+                    {% endif %}
+                    <a href="{% url "projects:attach.server" project.pk %}" class="btn btn-sm btn-warning">Attach Server</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+
+            <div class="card mb-2">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Files</h6>
+                </div>
+                <div class="card-body">
+                    {% if files %}
+                        <ul>
+                            {% for file in files %}
+                                <li><a href="{% url "projects:file.download" project.pk file.pk %}" class="text-primary">{{ file.filename }}</a> <a href="{% url "projects:file.delete" project.pk file.pk %}" class="text-danger">(remove)</a>
+                                <br>uploaded by: {{ file.user.email }} on {{ file.created|date:"F j, Y h:i A" }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No Attached Files</p>
+                    {% endif %}
+                    <button type="button" data-toggle="modal" data-target="#projectFilesModal" class="btn btn-sm btn-primary">Attach File</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <h2 class="h4 mb-0 text-gray-800">Project Notes</h2>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12 mb-4">
+            {% for note in project.notes.all %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <p>
+                            <a href="{% url "projects:note.delete" project.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger float-sm-right ml-1">
+                                <span class="icon text-white">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                            </a>
+                            <a href="{% url "projects:note.update" project.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-primary btn-icon-split float-sm-right">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </span>
+                                <span class="text">Edit Note</span>
+                            </a>
+                            Posted: {{ note.created|date:"F j, Y h:i A" }}<br>
+                            Modified: {{ note.modified|date:"F j, Y h:i A" }}
+                        </p>
+                        <p>{{ note.details|linebreaksbr }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No project notes yet.</p>
+            {% endfor %}
+        </div>
+        <div class="col-lg-12 mb">
+            <a href="{% url "projects:note.create" project.pk %}" class="d-xs-block d-sm-inline-block btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span class="text">Add Note</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <a href="{% url "projects:delete" project.pk %}" class="btn btn-danger float-right">Delete Project</a>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="projectFilesModal" tabindex="-1" role="dialog" aria-labelledby="projectFilesModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url "projects:file.create" project.pk %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="projectFilesModalLabel">Upload a Project File</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="projectFile" name="file">
+                            <label class="custom-file-label" for="projectFile">Choose file</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

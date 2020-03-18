@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}
+Delete Note
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Delete Server Note</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{% url "servers:note.delete" server.pk note.pk %}">
+        {% csrf_token %}
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <p class="message warning">Are you sure you want to delete this note?</p>
+                <pre>{{ note.details|linebreaks }}</pre>
+                <a href="{% url "servers:detail" server.pk %}" class="btn btn-lg btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-lg btn-warning">Delete Note</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

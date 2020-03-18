@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+Project List
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Projects</h1>
+        <a href="{% url "projects:create" %}" class="d-sm-inline-block btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+            <span class="text">Add New</span>
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <h2 class="h5 mb-3 text-gray-800">{{ status|title }} Projects</h2>
+            {% if projects %}
+                <div class="list-group">
+                    {% for project in projects %}
+                        <a href="{% url "projects:detail" project.pk %}" class="h6 mb-1 list-group-item list-group-item-action text-primary">{{ project.name }}</a>
+                    {% endfor %}
+                </div>
+                <br />
+            {% else %}
+                <p>No {{ status }} projects yet.</p>
+                {% if status == 'active' %}
+                <p><a href="{% url "projects:create" %}" class="btn btn-primary btn-lg">Create One Now</a></p>
+                {% endif %}
+            {% endif %}
+            <p><a href="{% url "projects:list.by_status" status=alt_status %}">View {{ alt_status }} projects</a></p>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}
+{% if not file %}Add New{% else %}Update{% endif %} Server File
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{% if not file %}Add New{% else %}Update{% endif %} Server File</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{% if not file %}{% url "servers:file.create" server.pk %}{% else %}{% url "servers:update_file" server.pk file.pk %}{% endif %}">
+        {% csrf_token %}
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                {% with form as form %}
+                    {% include "servers/partials/serverfile_fields.html" %}
+                {% endwith %}
+
+                <a href="{% url "servers:detail" server.pk %}" class="btn btn-lg btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-lg btn-warning">{% if not file %}Create{% else %}Update{% endif %} Server File</button>
+
+            </div>
+        </div>
+    </form>
+{% endblock %}

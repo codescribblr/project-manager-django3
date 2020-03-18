@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+Server List
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Servers</h1>
+        <a href="{% url "servers:create" %}" class="d-sm-inline-block btn btn-warning btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+            <span class="text">Add New</span>
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <h2 class="h5 mb-3 text-gray-800">{{ status|title }} Servers</h2>
+            {% if servers %}
+                <div class="list-group">
+                    {% for server in servers %}
+                        <a href="{% url "servers:detail" server.pk %}" class="h6 mb-1 list-group-item list-group-item-action text-warning">{{ server.hostname }}</a>
+                    {% endfor %}
+                </div>
+                <br />
+            {% else %}
+                <p>No {{ status }} servers yet.</p>
+                {% if status == 'active' %}
+                <p><a href="{% url "servers:create" %}" class="btn btn-warning btn-lg">Create One Now</a></p>
+                {% endif %}
+            {% endif %}
+            <p><a href="{% url "servers:list.by_status" status=alt_status %}">View {{ alt_status }} servers</a></p>
+        </div>
+    </div>
+{% endblock %}

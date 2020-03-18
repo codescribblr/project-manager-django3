@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}
+{% if not note %}Add New{% else %}Update{% endif %} Task Note
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{% if not note %}Add New{% else %}Update{% endif %} Task Note</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{% if not note %}{% url "tasks:note.create" task.pk %}{% else %}{% url "tasks:note.update" task.pk note.pk %}{% endif %}">
+        {% csrf_token %}
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                {% with form as form %}
+                    {% include "tasks/partials/tasknote_fields.html" %}
+                {% endwith %}
+
+                <a href="{% url "tasks:detail" task.pk %}" class="btn btn-lg btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-lg btn-info">{% if not note %}Create{% else %}Update{% endif %} Task Note</button>
+
+            </div>
+        </div>
+    </form>
+{% endblock %}

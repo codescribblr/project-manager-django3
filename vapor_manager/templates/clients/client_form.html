@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}
+{% if not client %}Add New{% else %}Update{% endif %} Client
+{% endblock %}
+
+{% block page_heading %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{% if not client %}Add New{% else %}Update{% endif %} Client</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{% if not client %}{% url "clients:create" %}{% else %}{% url "clients:update" client.pk %}{% endif %}">
+        {% csrf_token %}
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                {% with form as form %}
+                    {% include "clients/partials/client_fields.html" %}
+                {% endwith %}
+
+                <a href="{% if not client %}{% url "clients:list" %}{% else %}{% url "clients:detail" client.pk %}{% endif %}" class="btn btn-lg btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-lg btn-success">{% if not client %}Create{% else %}Update{% endif %} Client</button>
+
+            </div>
+        </div>
+    </form>
+{% endblock %}
