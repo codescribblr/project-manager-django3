@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Account Profile{% endblock %}
+
+{% block page_heading %}
+<!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Account Profile</h1>
+        <div>
+            <a href="{% url "accounts:list" %}" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-exchange-alt"></i>
+                </span>
+                <span class="text">Switch Account</span>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <p><strong>Account Owner Email:</strong> {{ object.owner.email }}</p>
+            <p><strong>Company Name:</strong> {{ object.company }}</p>
+            <p>
+                <strong>Users:</strong><br>
+                <ul>
+                {% for user in object.users.all %}
+                    <li>{{ user.name }} - {{ user.email }} {% if user == object.owner %}(Owner){% else %}(Member){% endif %}</li>
+                {% endfor %}
+                </ul>
+            </p>
+        </div>
+    </div>
+
+    {% if object.owner == request.user %}
+        <!-- Action buttons -->
+        <div class="row">
+
+            <div class="col-sm-12">
+                <a class="btn btn-primary mr-2" href="{% url 'accounts:update' object.pk %}" role="button">Update Acount Profile</a>
+                <button type="button" data-toggle="modal" data-target="#accountInviteModal" class="btn btn-primary btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-user-plus"></i>
+                    </span>
+                    <span class="text">Invite New User</span>
+                </button>
+            </div>
+
+        </div>
+        <!-- End Action buttons -->
+    {% endif %}
+    <!-- Modal -->
+    <div class="modal fade" id="accountInviteModal" tabindex="-1" role="dialog" aria-labelledby="accountInviteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'accounts:invite' object.pk %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="accountInviteModalLabel">Invite A User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="email">Enter an email address and invite someone to collaborate with you on this account</label>
+                            <input class="form-control" id="email" type="email" name="email" placeholder="Email Address" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Send Invite</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+

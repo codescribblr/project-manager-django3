@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel, StatusModel, UUIDModel
 
-from vapor_manager.users.models import Account
+from vapor_manager.accounts.models import Account
 
 
 def account_client_path(instance, filename):
@@ -43,11 +43,15 @@ class Client(TimeStampedModel, StatusModel, UUIDModel):
     )
     account = models.ForeignKey(Account, related_name='clients', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
+    archived_at = models.DateTimeField(null=True, blank=True)
 
     objects = ClientManager()
 
     def get_absolute_url(self):
         return reverse('clients:detail', args=(self.id,))
+
+    def __str__(self):
+        return self.name
 
 
 class ClientNote(TimeStampedModel):

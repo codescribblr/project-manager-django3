@@ -7,7 +7,7 @@ Task Details
 {% block page_heading %}
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Task Detail - {{ task.name }}</h1>
+        <h1 class="h3 mb-4 text-gray-800">Task Detail - {{ task.name }}</h1>
         <a href="{% url "tasks:update" task.pk %}" class="d-sm-inline-block btn btn-info btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-pencil-alt"></i>
@@ -88,18 +88,20 @@ Task Details
             {% for note in task.notes.all %}
                 <div class="card mb-2">
                     <div class="card-body">
-                        <p>
-                            <a href="{% url "tasks:note.delete" task.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger float-sm-right ml-1">
-                                <span class="icon text-white">
-                                    <i class="fas fa-trash"></i>
-                                </span>
-                            </a>
-                            <a href="{% url "tasks:note.update" task.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-info btn-icon-split float-sm-right">
+                        <p class="buttons float-sm-right">
+                            <a href="{% url "tasks:note.update" task.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-info btn-icon-split">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-pencil-alt"></i>
                                 </span>
                                 <span class="text">Edit Note</span>
                             </a>
+                            <a href="{% url "tasks:note.delete" task.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger ml-sm-1">
+                                <span class="icon text-white">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                            </a>
+                        </p>
+                        <p>
                             Posted: {{ note.created|date:"F j, Y h:i A" }}<br>
                             Modified: {{ note.modified|date:"F j, Y h:i A" }}
                         </p>

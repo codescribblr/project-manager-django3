@@ -15,7 +15,7 @@
                 <strong>Accounts:</strong><br>
                 <ul>
                 {% for account in accounts %}
-                    <li>{{ account.name }} {% if request.user == account.owner %}(Owner){% else %}(Member){% endif %}</li>
+                    <li>{{ account.company }} {% if request.user == account.owner %}(Owner){% else %}(Member){% endif %}</li>
                 {% endfor %}
                 </ul>
             </p>
@@ -33,6 +33,12 @@
 
         </div>
         <!-- End Action buttons -->
+        <div class="row">
+            <div class="col-sm-12">
+                <p>Have a Social Account you'd like to link to make sign in easier?</p>
+                <a class="btn btn-primary" href="{% url "socialaccount_connections" %}" role="button">Connect Social Accounts</a>
+            </div>
+        </div>
     {% endif %}
 
 {% endblock content %}

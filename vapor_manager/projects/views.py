@@ -1,7 +1,10 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views import View
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, FormView
 from django_downloadview import ObjectDownloadView
 
@@ -10,10 +13,10 @@ from vapor_manager.projects.forms import ProjectAttachServerForm
 from vapor_manager.projects.models import Project, ProjectFile, ProjectNote
 from vapor_manager.servers.models import Server
 from vapor_manager.tasks.models import Task
-from vapor_manager.users.models import Account
+from vapor_manager.accounts.models import Account
 
 
-class ProjectListView(ListView):
+class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
     context_object_name = 'projects'
 
@@ -29,7 +32,7 @@ class ProjectListView(ListView):
         return data
 
 
-class ProjectCreateView(CreateView):
+class ProjectCreateView(LoginRequiredMixin, CreateView):
     model = Project
     context_object_name = 'project'
     fields = ['name', 'description']
@@ -45,7 +48,7 @@ class ProjectCreateView(CreateView):
         return data
 
 
-class ProjectDetailView(DetailView):
+class ProjectDetailView(LoginRequiredMixin, DetailView):
     model = Project
     context_object_name = 'project'
 
@@ -61,7 +64,7 @@ class ProjectDetailView(DetailView):
         return data
 
 
-class ProjectUpdateView(UpdateView):
+class ProjectUpdateView(LoginRequiredMixin, UpdateView):
     model = Project
     context_object_name = 'project'
     fields = ['name', 'description', 'private_info', 'status']
@@ -75,7 +78,25 @@ class ProjectUpdateView(UpdateView):
         return data
 
 
-class ProjectAttachServerView(FormView):
+class ProjectArchiveView(LoginRequiredMixin, UpdateView):
+    model = Project
+    context_object_name = 'project'
+    fields = ['status']
+    http_method_names = ['post', ]
+
+    def get_queryset(self):
+        return self.model.objects.by_account(self.request.account).all()
+
+    def form_valid(self, form):
+        form.instance.status = 'inactive'
+        form.instance.completed_at = timezone.now()
+        messages.add_message(
+            self.request, messages.SUCCESS, _("Project archived successfully.")
+        )
+        return super().form_valid(form)
+
+
+class ProjectAttachServerView(LoginRequiredMixin, FormView):
     template_name = 'projects/project_attach_server_form.html'
     form_class = ProjectAttachServerForm
 
@@ -98,7 +119,7 @@ class ProjectAttachServerView(FormView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ProjectDeleteView(DeleteView):
+class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     model = Project
     context_object_name = 'project'
 
@@ -109,7 +130,7 @@ class ProjectDeleteView(DeleteView):
         return reverse('dashboard')
 
 
-class ProjectFileCreateView(CreateView):
+class ProjectFileCreateView(LoginRequiredMixin, CreateView):
     model = ProjectFile
     context_object_name = 'file'
     fields = ['file']
@@ -126,7 +147,7 @@ class ProjectFileCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ProjectFileDeleteView(DeleteView):
+class ProjectFileDeleteView(LoginRequiredMixin, DeleteView):
     model = ProjectFile
     context_object_name = 'file'
 
@@ -139,7 +160,7 @@ class ProjectFileDeleteView(DeleteView):
         return reverse('projects:detail', kwargs={'pk': self.kwargs.get('project_pk')})
 
 
-class ProjectFileDownloadView(ObjectDownloadView):
+class ProjectFileDownloadView(LoginRequiredMixin, ObjectDownloadView):
     model = ProjectFile
     basename_field = 'filename'
 
@@ -147,7 +168,7 @@ class ProjectFileDownloadView(ObjectDownloadView):
         return self.model.objects.filter(project__account=self.request.account).all()
 
 
-class ProjectNoteCreateView(CreateView):
+class ProjectNoteCreateView(LoginRequiredMixin, CreateView):
     model = ProjectNote
     context_object_name = 'note'
     fields = ['details']
@@ -162,7 +183,7 @@ class ProjectNoteCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ProjectNoteUpdateView(UpdateView):
+class ProjectNoteUpdateView(LoginRequiredMixin, UpdateView):
     model = ProjectNote
     context_object_name = 'note'
     fields = ['details']
@@ -176,7 +197,7 @@ class ProjectNoteUpdateView(UpdateView):
         return data
 
 
-class ProjectNoteDeleteView(DeleteView):
+class ProjectNoteDeleteView(LoginRequiredMixin, DeleteView):
     model = ProjectNote
     context_object_name = 'note'
 

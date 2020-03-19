@@ -12,7 +12,7 @@ urlpatterns = [
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
     path(settings.ADMIN_URL, admin.site.urls),
     path("users/", include("vapor_manager.users.urls", namespace="users")),
-    path("accounts/", include("vapor_manager.users.urls_account", namespace="accounts")),
+    path("accounts/", include("vapor_manager.accounts.urls", namespace="accounts")),
     path("clients/", include("vapor_manager.clients.urls", namespace="clients")),
     path("projects/", include("vapor_manager.projects.urls", namespace="projects")),
     path("tasks/", include("vapor_manager.tasks.urls", namespace="tasks")),

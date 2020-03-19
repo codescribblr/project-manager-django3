@@ -6,23 +6,15 @@ Vapor Manager Dashboard
 {% block page_heading %}
 <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-        <div class="dropdown show">
-            <button type="button" class="btn btn-primary dropdown-toggle" id="accountSwitcher" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="icon text-white-50" style="padding-right: 5px;">
-                    <i class="fas fa-exchange-alt"></i>
+        <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
+        <div>
+            <a href="{% url "accounts:list" %}" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-sync-alt"></i>
                 </span>
                 <span class="text">Switch Account</span>
-            </button>
-            <div class="dropdown-menu" aria-labelledby="accountSwitcher">
-                <a class="dropdown-item" href="#">Action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
-            </div>
+            </a>
         </div>
-
     </div>
 {% endblock %}
 

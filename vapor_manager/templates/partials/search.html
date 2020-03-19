@@ -1,27 +1,32 @@
 {% load static i18n compress%}
 <!-- Topbar Search -->
-<form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-    <div class="input-group">
-        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-primary" type="button">
-                <i class="fas fa-search fa-sm"></i>
-            </button>
-        </div>
-    </div>
-</form>
+{#<form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">#}
+{#    <div class="input-group">#}
+{#        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">#}
+{#        <div class="input-group-append">#}
+{#            <button class="btn btn-primary" type="button">#}
+{#                <i class="fas fa-search fa-sm"></i>#}
+{#            </button>#}
+{#        </div>#}
+{#    </div>#}
+{#</form>#}
+{% if user.is_authenticated %}
+<div class="d-sm-inline-block mr-auto ml-md-3 my-2 my-md-0">
+    <a href="{% url "accounts:list" %}" class="text-muted">{{ account.company }} <i class="fas fa-sync-alt fa-fw"></i></a>
+</div>
+{% endif %}
 
 <!-- Topbar Navbar -->
 <ul class="navbar-nav ml-auto">
-
+    {% if user.is_authenticated %}
     <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-    <li class="nav-item dropdown no-arrow d-sm-none">
+    <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-search fa-fw"></i>
         </a>
         <!-- Dropdown - Messages -->
-        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
-            <form class="form-inline mr-auto w-100 navbar-search">
+        <div class="dropdown-menu dropdown-menu-right dropdown-search p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+            <form class="form mr-auto w-100 navbar-search">
                 <div class="input-group">
                     <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
                     <div class="input-group-append">
@@ -33,7 +38,7 @@
             </form>
         </div>
     </li>
-
+    {% endif %}
     {% include 'partials/profile-nav.html' %}
 
 </ul>

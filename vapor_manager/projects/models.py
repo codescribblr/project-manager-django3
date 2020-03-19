@@ -9,7 +9,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel, StatusModel, UUIDModel
 
 from vapor_manager.clients.models import Client
-from vapor_manager.users.models import Account
+from vapor_manager.accounts.models import Account
 
 User = get_user_model()
 

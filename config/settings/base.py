@@ -72,6 +72,9 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    # Login via Google
+    'allauth.socialaccount.providers.google',
+
     "rest_framework",
     "django_celery_beat",
     "django_cleanup.apps.CleanupConfig",
@@ -79,6 +82,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "vapor_manager.users.apps.UsersConfig",
+    "vapor_manager.accounts.apps.AccountsConfig",
     "vapor_manager.clients.apps.ClientsConfig",
     "vapor_manager.projects.apps.ProjectsConfig",
     "vapor_manager.tasks.apps.TasksConfig",
@@ -290,21 +294,30 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 # ------------------------------------------------------------------------------
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_REQUIRED = True
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_PRESERVE_USERNAME_CASING = False
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_ADAPTER = "vapor_manager.users.adapters.AccountAdapter"
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_FORMS = {'signup': 'vapor_manager.accounts.forms.NameSignupForm'}
 SOCIALACCOUNT_ADAPTER = "vapor_manager.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_QUERY_EMAIL = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 # django-compressor
 # ------------------------------------------------------------------------------
 # https://django-compressor.readthedocs.io/en/latest/quickstart/#installation

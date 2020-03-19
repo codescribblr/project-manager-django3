@@ -20,3 +20,11 @@
     color: #CF9B19 !important;
 }
 
+a.card:hover {
+    text-decoration: none;
+
+}
+
+.dropdown-search {
+    min-width: 300px;
+}

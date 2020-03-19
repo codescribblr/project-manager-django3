@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
@@ -5,10 +6,10 @@ from django_downloadview import ObjectDownloadView
 
 from vapor_manager.clients.models import Client
 from vapor_manager.servers.models import Server, ServerFile, ServerNote
-from vapor_manager.users.models import Account
+from vapor_manager.accounts.models import Account
 
 
-class ServerListView(ListView):
+class ServerListView(LoginRequiredMixin, ListView):
     model = Server
     context_object_name = 'servers'
 
@@ -24,7 +25,7 @@ class ServerListView(ListView):
         return data
 
 
-class ServerCreateView(CreateView):
+class ServerCreateView(LoginRequiredMixin, CreateView):
     model = Server
     context_object_name = 'server'
     fields = ['hostname', 'public_ip', 'platform', 'capacity', 'private_info', 'slots', 'cost', ]
@@ -39,7 +40,7 @@ class ServerCreateView(CreateView):
         return data
 
 
-class ServerDetailView(DetailView):
+class ServerDetailView(LoginRequiredMixin, DetailView):
     model = Server
     context_object_name = 'server'
 
@@ -54,7 +55,7 @@ class ServerDetailView(DetailView):
         return data
 
 
-class ServerUpdateView(UpdateView):
+class ServerUpdateView(LoginRequiredMixin, UpdateView):
     model = Server
     context_object_name = 'server'
     fields = ['hostname', 'public_ip', 'platform', 'capacity', 'private_info', 'slots', 'cost', 'status', ]
@@ -67,7 +68,7 @@ class ServerUpdateView(UpdateView):
         return data
 
 
-class ServerDeleteView(DeleteView):
+class ServerDeleteView(LoginRequiredMixin, DeleteView):
     model = Server
     context_object_name = 'server'
 
@@ -78,7 +79,7 @@ class ServerDeleteView(DeleteView):
         return reverse('dashboard')
 
 
-class ServerFileCreateView(CreateView):
+class ServerFileCreateView(LoginRequiredMixin, CreateView):
     model = ServerFile
     context_object_name = 'file'
     fields = ['file']
@@ -95,7 +96,7 @@ class ServerFileCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ServerFileDeleteView(DeleteView):
+class ServerFileDeleteView(LoginRequiredMixin, DeleteView):
     model = ServerFile
     context_object_name = 'file'
 
@@ -111,7 +112,7 @@ class ServerFileDeleteView(DeleteView):
         return reverse('servers:detail', kwargs={'pk': self.kwargs.get('server_pk')})
 
 
-class ServerFileDownloadView(ObjectDownloadView):
+class ServerFileDownloadView(LoginRequiredMixin, ObjectDownloadView):
     model = ServerFile
     basename_field = 'filename'
 
@@ -119,7 +120,7 @@ class ServerFileDownloadView(ObjectDownloadView):
         return self.model.objects.filter(server__account=self.request.account).all()
 
 
-class ServerNoteCreateView(CreateView):
+class ServerNoteCreateView(LoginRequiredMixin, CreateView):
     model = ServerNote
     context_object_name = 'note'
     fields = ['details']
@@ -134,7 +135,7 @@ class ServerNoteCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ServerNoteUpdateView(UpdateView):
+class ServerNoteUpdateView(LoginRequiredMixin, UpdateView):
     model = ServerNote
     context_object_name = 'note'
     fields = ['details']
@@ -148,7 +149,7 @@ class ServerNoteUpdateView(UpdateView):
         return data
 
 
-class ServerNoteDeleteView(DeleteView):
+class ServerNoteDeleteView(LoginRequiredMixin, DeleteView):
     model = ServerNote
     context_object_name = 'note'
 

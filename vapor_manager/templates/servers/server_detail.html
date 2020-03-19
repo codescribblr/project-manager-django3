@@ -7,7 +7,7 @@ Server Details
 {% block page_heading %}
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Server Detail - {{ server.hostname }}</h1>
+        <h1 class="h3 mb-4 text-gray-800">Server Detail - {{ server.hostname }}</h1>
         <a href="{% url "servers:update" server.pk %}" class="d-sm-inline-block btn btn-warning btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-pencil-alt"></i>
@@ -135,18 +135,20 @@ Server Details
             {% for note in server.notes.all %}
                 <div class="card mb-2">
                     <div class="card-body">
-                        <p>
-                            <a href="{% url "servers:note.delete" server.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger float-sm-right ml-1">
-                                <span class="icon text-white">
-                                    <i class="fas fa-trash"></i>
-                                </span>
-                            </a>
-                            <a href="{% url "servers:note.update" server.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-warning btn-icon-split float-sm-right">
+                        <p class="buttons float-sm-right">
+                            <a href="{% url "servers:note.update" server.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-warning btn-icon-split">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-pencil-alt"></i>
                                 </span>
                                 <span class="text">Edit Note</span>
                             </a>
+                            <a href="{% url "servers:note.delete" server.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger ml-sm-1">
+                                <span class="icon text-white">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                            </a>
+                        </p>
+                        <p>
                             Posted: {{ note.created|date:"F j, Y h:i A" }}<br>
                             Modified: {{ note.modified|date:"F j, Y h:i A" }}
                         </p>

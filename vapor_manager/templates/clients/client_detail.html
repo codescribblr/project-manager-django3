@@ -7,7 +7,7 @@ Client Details
 {% block page_heading %}
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Client Detail - {{ client.name }}</h1>
+        <h1 class="h3 mb-4 text-gray-800">Client Detail - {{ client.name }}</h1>
         <a href="{% url "clients:update" client.pk %}" class="d-sm-inline-block btn btn-success btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-pencil-alt"></i>
@@ -29,30 +29,38 @@ Client Details
                     <h6 class="m-0 font-weight-bold text-success">Contact Details</h6>
                 </div>
                 <div class="card-body">
+                    <div class="card-deck">
                     {% for contact in client.contacts.all %}
                         <div class="card mb-2">
-                            <div class="card-body">
-                                <a href="{% url "clients:delete_contact" client.pk contact.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger float-sm-right ml-1">
-                                    <span class="icon text-white">
-                                        <i class="fas fa-trash"></i>
-                                    </span>
-                                </a>
-                                <a href="{% url "clients:update_contact" client.pk contact.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-success btn-icon-split float-sm-right">
-                                    <span class="icon text-white-50">
-                                        <i class="fas fa-pencil-alt"></i>
-                                    </span>
-                                    <span class="text">Edit Contact</span>
-                                </a>
-                                {% if contact.is_primary %}
-                                <p><strong>--- PRIMARY CONTACT ---</strong></p>
-                                {% endif %}
-                                <p><strong>Contact Name:</strong> {{ contact.name }}<br>
-                                <strong>Contact Email:</strong> {{ contact.email }}<br>
-                                <strong>Contact Phone:</strong> {{ contact.phone }}<br>
-                                <strong>Contact Position:</strong> {{ contact.position }}</p>
+                            <div class="card-header">
+                                <div class="buttons float-sm-right mb-2">
+                                    <a href="{% url "clients:update_contact" client.pk contact.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-success btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </span>
+                                        <span class="text">Edit Contact</span>
+                                    </a>
+                                    <a href="{% url "clients:delete_contact" client.pk contact.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger ml-1">
+                                        <span class="icon text-white">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </a>
+                                </div>
                             </div>
+                            <div class="card-body">
+                                <p><strong>Name:</strong> {{ contact.name }}<br>
+                                <strong>Email:</strong> {{ contact.email }}<br>
+                                <strong>Phone:</strong> {{ contact.phone }}<br>
+                                <strong>Position:</strong> {{ contact.position }}</p>
+                            </div>
+                            {% if contact.is_primary %}
+                            <div class="card-footer">
+                                <span class="text-muted"><strong>Primary Contact</strong></span>
+                            </div>
+                            {% endif %}
                         </div>
                     {% endfor %}
+                    </div>
                     <p><a href="{% url "clients:create_contact" client.pk %}" class="btn btn-success btn-sm">Add Contact</a></p>
                 </div>
             </div>
@@ -169,18 +177,20 @@ Client Details
             {% for note in client.notes.all %}
                 <div class="card mb-2">
                     <div class="card-body">
-                        <p>
-                            <a href="{% url "clients:note.delete" client.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger float-sm-right ml-1">
-                                <span class="icon text-white">
-                                    <i class="fas fa-trash"></i>
-                                </span>
-                            </a>
-                            <a href="{% url "clients:note.update" client.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-success btn-icon-split float-sm-right">
+                        <p class="buttons float-sm-right">
+                            <a href="{% url "clients:note.update" client.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-success btn-icon-split">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-pencil-alt"></i>
                                 </span>
                                 <span class="text">Edit Note</span>
                             </a>
+                            <a href="{% url "clients:note.delete" client.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger ml-sm-1">
+                                <span class="icon text-white">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                            </a>
+                        </p>
+                        <p>
                             Posted: {{ note.created|date:"F j, Y h:i A" }}<br>
                             Modified: {{ note.modified|date:"F j, Y h:i A" }}
                         </p>
@@ -204,6 +214,16 @@ Client Details
     <div class="row mb-5">
         <div class="col-lg-12">
             <a href="{% url "clients:delete" client.pk %}" class="btn btn-danger float-right">Delete Client</a>
+            <form method="POST" action="{% url "clients:archive" client.pk %}" class="float-right mr-2">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="inactive" />
+                <button class="d-sm-inline-block btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">Archive Client</span>
+                </button>
+            </form>
         </div>
     </div>
 {% endblock %}

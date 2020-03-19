@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -8,10 +9,10 @@ from django_downloadview import ObjectDownloadView
 
 from vapor_manager.projects.models import Project
 from vapor_manager.tasks.models import Task, TaskFile, TaskNote
-from vapor_manager.users.models import Account
+from vapor_manager.accounts.models import Account
 
 
-class TaskListView(ListView):
+class TaskListView(LoginRequiredMixin, ListView):
     model = Task
     context_object_name = 'tasks'
 
@@ -27,7 +28,7 @@ class TaskListView(ListView):
         return data
 
 
-class TaskCreateView(CreateView):
+class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     context_object_name = 'task'
     fields = ['name', 'description', 'start_date', 'due_date']
@@ -43,7 +44,7 @@ class TaskCreateView(CreateView):
         return data
 
 
-class TaskDetailView(DetailView):
+class TaskDetailView(LoginRequiredMixin, DetailView):
     model = Task
     context_object_name = 'task'
 
@@ -56,7 +57,7 @@ class TaskDetailView(DetailView):
         return data
 
 
-class TaskUpdateView(UpdateView):
+class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
     context_object_name = 'task'
     fields = ['name', 'description', 'start_date', 'due_date', 'status']
@@ -70,7 +71,7 @@ class TaskUpdateView(UpdateView):
         return data
 
 
-class TaskArchiveView(UpdateView):
+class TaskArchiveView(LoginRequiredMixin, UpdateView):
     model = Task
     context_object_name = 'task'
     fields = ['status']
@@ -88,7 +89,7 @@ class TaskArchiveView(UpdateView):
         return super().form_valid(form)
 
 
-class TaskDeleteView(DeleteView):
+class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     context_object_name = 'task'
 
@@ -99,7 +100,7 @@ class TaskDeleteView(DeleteView):
         return reverse('dashboard')
 
 
-class TaskFileCreateView(CreateView):
+class TaskFileCreateView(LoginRequiredMixin, CreateView):
     model = TaskFile
     context_object_name = 'file'
     fields = ['file']
@@ -116,7 +117,7 @@ class TaskFileCreateView(CreateView):
         return super().form_valid(form)
 
 
-class TaskFileDeleteView(DeleteView):
+class TaskFileDeleteView(LoginRequiredMixin, DeleteView):
     model = TaskFile
     context_object_name = 'file'
 
@@ -132,7 +133,7 @@ class TaskFileDeleteView(DeleteView):
         return reverse('tasks:detail', kwargs={'pk': self.kwargs.get('task_pk')})
 
 
-class TaskFileDownloadView(ObjectDownloadView):
+class TaskFileDownloadView(LoginRequiredMixin, ObjectDownloadView):
     model = TaskFile
     basename_field = 'filename'
 
@@ -140,7 +141,7 @@ class TaskFileDownloadView(ObjectDownloadView):
         return self.model.objects.filter(task__account=self.request.account).all()
 
 
-class TaskNoteCreateView(CreateView):
+class TaskNoteCreateView(LoginRequiredMixin, CreateView):
     model = TaskNote
     context_object_name = 'note'
     fields = ['details']
@@ -155,7 +156,7 @@ class TaskNoteCreateView(CreateView):
         return super().form_valid(form)
 
 
-class TaskNoteUpdateView(UpdateView):
+class TaskNoteUpdateView(LoginRequiredMixin, UpdateView):
     model = TaskNote
     context_object_name = 'note'
     fields = ['details']
@@ -169,7 +170,7 @@ class TaskNoteUpdateView(UpdateView):
         return data
 
 
-class TaskNoteDeleteView(DeleteView):
+class TaskNoteDeleteView(LoginRequiredMixin, DeleteView):
     model = TaskNote
     context_object_name = 'note'
 

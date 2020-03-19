@@ -10,6 +10,7 @@ urlpatterns = [
     path('add/', views.ProjectCreateView.as_view(), name='create'),
     path('<uuid:pk>/', views.ProjectDetailView.as_view(), name='detail'),
     path('<uuid:pk>/update/', views.ProjectUpdateView.as_view(), name='update'),
+    path('<uuid:pk>/archive/', views.ProjectArchiveView.as_view(), name='archive'),
     path('<uuid:pk>/delete/', views.ProjectDeleteView.as_view(), name='delete'),
     path('<uuid:pk>/attach/server/', views.ProjectAttachServerView.as_view(), name='attach.server'),
     # files

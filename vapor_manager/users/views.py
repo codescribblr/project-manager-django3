@@ -5,8 +5,6 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, RedirectView, UpdateView
 
-from vapor_manager.users.models import Account
-
 User = get_user_model()
 
 
@@ -48,28 +46,3 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
         return reverse("users:detail", kwargs={"email": self.request.user.email})
 
 
-class AccountDetailView(LoginRequiredMixin, DetailView):
-
-    model = Account
-
-    def get_context_data(self, **kwargs):
-        data = super().get_context_data(**kwargs)
-        return data
-
-
-class AccountUpdateView(LoginRequiredMixin, UpdateView):
-
-    model = Account
-    fields = ["company"]
-
-    def get_success_url(self):
-        return reverse("accounts:detail", kwargs={"pk": self.object.pk})
-
-    def get_object(self):
-        return Account.objects.get(pk=self.kwargs.get('pk'), users=self.request.user)
-
-    def form_valid(self, form):
-        messages.add_message(
-            self.request, messages.SUCCESS, _("Account Profile successfully updated")
-        )
-        return super().form_valid(form)

@@ -1,5 +1,9 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
 from vapor_manager.clients.forms import ClientCreateForm
@@ -9,7 +13,7 @@ from vapor_manager.servers.models import Server
 from vapor_manager.tasks.models import Task
 
 
-class ClientListView(ListView):
+class ClientListView(LoginRequiredMixin, ListView):
     model = Client
     context_object_name = 'clients'
 
@@ -25,7 +29,7 @@ class ClientListView(ListView):
         return data
 
 
-class ClientCreateView(CreateView):
+class ClientCreateView(LoginRequiredMixin, CreateView):
     model = Client
     context_object_name = 'client'
     form_class = ClientCreateForm
@@ -36,7 +40,7 @@ class ClientCreateView(CreateView):
         return kwargs
 
 
-class ClientDetailView(DetailView):
+class ClientDetailView(LoginRequiredMixin, DetailView):
     model = Client
     context_object_name = 'client'
 
@@ -49,13 +53,31 @@ class ClientDetailView(DetailView):
         return data
 
 
-class ClientUpdateView(UpdateView):
+class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client
     context_object_name = 'client'
     fields = ['name', 'status']
 
 
-class ClientDeleteView(DeleteView):
+class ClientArchiveView(LoginRequiredMixin, UpdateView):
+    model = Client
+    context_object_name = 'client'
+    fields = ['status']
+    http_method_names = ['post', ]
+
+    def get_queryset(self):
+        return self.model.objects.by_account(self.request.account).all()
+
+    def form_valid(self, form):
+        form.instance.status = 'inactive'
+        form.instance.archived_at = timezone.now()
+        messages.add_message(
+            self.request, messages.SUCCESS, _("Project archived successfully.")
+        )
+        return super().form_valid(form)
+
+
+class ClientDeleteView(LoginRequiredMixin, DeleteView):
     model = Client
     context_object_name = 'client'
 
@@ -63,7 +85,7 @@ class ClientDeleteView(DeleteView):
         return reverse('dashboard')
 
 
-class ClientContactCreateView(CreateView):
+class ClientContactCreateView(LoginRequiredMixin, CreateView):
     model = ClientContact
     context_object_name = 'contact'
     fields = ['name', 'email', 'phone', 'position']
@@ -78,7 +100,7 @@ class ClientContactCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ClientContactUpdateView(UpdateView):
+class ClientContactUpdateView(LoginRequiredMixin, UpdateView):
     model = ClientContact
     context_object_name = 'contact'
     fields = ['name', 'email', 'phone', 'position']
@@ -89,7 +111,7 @@ class ClientContactUpdateView(UpdateView):
         return data
 
 
-class ClientContactDeleteView(DeleteView):
+class ClientContactDeleteView(LoginRequiredMixin, DeleteView):
     model = ClientContact
     context_object_name = 'contact'
 
@@ -102,7 +124,7 @@ class ClientContactDeleteView(DeleteView):
         return reverse('clients:detail', kwargs={'pk': self.kwargs.get('client_pk')})
 
 
-class ClientNoteCreateView(CreateView):
+class ClientNoteCreateView(LoginRequiredMixin, CreateView):
     model = ClientNote
     context_object_name = 'note'
     fields = ['details']
@@ -117,7 +139,7 @@ class ClientNoteCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ClientNoteUpdateView(UpdateView):
+class ClientNoteUpdateView(LoginRequiredMixin, UpdateView):
     model = ClientNote
     context_object_name = 'note'
     fields = ['details']
@@ -128,7 +150,7 @@ class ClientNoteUpdateView(UpdateView):
         return data
 
 
-class ClientNoteDeleteView(DeleteView):
+class ClientNoteDeleteView(LoginRequiredMixin, DeleteView):
     model = ClientNote
     context_object_name = 'note'
 

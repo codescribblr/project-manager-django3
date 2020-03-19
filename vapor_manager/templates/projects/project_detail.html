@@ -7,11 +7,11 @@ Project Details
 {% block page_heading %}
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Project Detail - {{ project.name }}</h1>
+        <h1 class="h3 mb-4 text-gray-800">Project Detail - {{ project.name }}</h1>
         <a href="{% url "projects:update" project.pk %}" class="d-sm-inline-block btn btn-primary btn-icon-split">
-                <span class="icon text-white-50">
-                    <i class="fas fa-pencil-alt"></i>
-                </span>
+            <span class="icon text-white-50">
+                <i class="fas fa-pencil-alt"></i>
+            </span>
             <span class="text">Edit</span>
         </a>
     </div>
@@ -144,18 +144,20 @@ Project Details
             {% for note in project.notes.all %}
                 <div class="card mb-2">
                     <div class="card-body">
-                        <p>
-                            <a href="{% url "projects:note.delete" project.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger float-sm-right ml-1">
-                                <span class="icon text-white">
-                                    <i class="fas fa-trash"></i>
-                                </span>
-                            </a>
-                            <a href="{% url "projects:note.update" project.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-primary btn-icon-split float-sm-right">
+                        <p class="buttons float-sm-right">
+                            <a href="{% url "projects:note.update" project.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-primary btn-icon-split">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-pencil-alt"></i>
                                 </span>
                                 <span class="text">Edit Note</span>
                             </a>
+                            <a href="{% url "projects:note.delete" project.pk note.pk %}" class="d-xs-block d-sm-inline-block btn btn-sm btn-danger ml-sm-1">
+                                <span class="icon text-white">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                            </a>
+                        </p>
+                        <p>
                             Posted: {{ note.created|date:"F j, Y h:i A" }}<br>
                             Modified: {{ note.modified|date:"F j, Y h:i A" }}
                         </p>
@@ -179,6 +181,16 @@ Project Details
     <div class="row mb-5">
         <div class="col-lg-12">
             <a href="{% url "projects:delete" project.pk %}" class="btn btn-danger float-right">Delete Project</a>
+            <form method="POST" action="{% url "projects:archive" project.pk %}" class="float-right mr-2">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="inactive" />
+                <button class="d-sm-inline-block btn btn-primary btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">Archive Project</span>
+                </button>
+            </form>
         </div>
     </div>
     <!-- Modal -->
